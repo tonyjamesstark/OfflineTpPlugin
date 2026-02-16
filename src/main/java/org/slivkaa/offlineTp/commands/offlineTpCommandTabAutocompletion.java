@@ -18,6 +18,6 @@ public class offlineTpCommandTabAutocompletion implements TabCompleter {
             autoCompletionList.add("Slivkaa");
         }
 
-        return List.of();
+        return autoCompletionList;
     }
 }
