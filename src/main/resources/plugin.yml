@@ -1,0 +1,7 @@
+name: OfflineTp
+version: '1.0'
+main: org.slivkaa.offlineTp.OfflineTp
+api-version: '1.21'
+prefix: SGProt
+authors: [ Slivkaa ]
+description: This simple plugin allows for showing server rules to players.
