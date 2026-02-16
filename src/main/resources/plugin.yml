@@ -5,3 +5,8 @@ api-version: '1.21'
 prefix: SGProt
 authors: [ Slivkaa ]
 description: This simple plugin allows for showing server rules to players.
+commands:
+  offlinetp:
+    description: allows to tp wth offline playerz
+    usage: /<command>
+    aliases: [otp, offlineteleport]
