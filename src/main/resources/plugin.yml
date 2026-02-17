@@ -2,11 +2,15 @@ name: OfflineTp
 version: '1.0'
 main: org.slivkaa.offlineTp.OfflineTp
 api-version: '1.21'
-prefix: SGProt
+prefix: OfflineTP
 authors: [ Slivkaa ]
 description: This simple plugin allows for showing server rules to players.
 commands:
   offlinetp:
     description: allows to tp wth offline playerz
-    usage: /<command>
+    usage: /<command> <target> [<otherTarget>]
     aliases: [otp, offlineteleport]
+  offlinetp-reload:
+    description: reloads config
+    usage: /<command>
+    aliases: [otp-reload, offlineteleport-reload]
