@@ -4,13 +4,37 @@ main: org.slivkaa.offlineTp.OfflineTp
 api-version: '1.21'
 prefix: OfflineTP
 authors: [ Slivkaa ]
-description: This simple plugin allows for showing server rules to players.
+description: This simple plugin allows to do teleport stuff to offline players.
 commands:
   offlinetp:
-    description: allows to tp wth offline playerz
+    description: Teleport offline or to offline players
     usage: /<command> <target> [<otherTarget>]
+    permission: offlinetp.offlinetp
     aliases: [otp, offlineteleport]
+
   offlinetp-reload:
-    description: reloads config
+    description: Reloads offline tp plugin
     usage: /<command>
+    permission: offlinetp.reload
     aliases: [otp-reload, offlineteleport-reload]
+
+# PS. Offline player can be online
+permissions:
+  offlinetp.reload:
+    description: Allows to reload offline tp plugin
+    default: op
+
+  offlinetp.offlinetp:
+    description: Allows the use of /offlinetp
+    default: op
+    children:
+      offlinetp.to-player: true
+      offlinetp.player-to-player: true
+
+  offlinetp.to-player:
+    description: Allows to teleport to offline player
+    default: op
+
+  offlinetp.player-to-player:
+    description: Allows to teleport offline player to other offline player
+    default: op

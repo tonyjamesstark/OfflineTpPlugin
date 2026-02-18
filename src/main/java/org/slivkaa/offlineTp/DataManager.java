@@ -1,4 +1,4 @@
-// Everything in here is credited to Gemeni AI unfortunately
+// Everything in here is credited to Gemini AI unfortunately
 
 package org.slivkaa.offlineTp;
 
@@ -13,15 +13,17 @@ public class DataManager {
     private final JavaPlugin plugin;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
+    private String filename;
 
-    public DataManager(JavaPlugin plugin) {
+    public DataManager(JavaPlugin plugin, String filename) {
         this.plugin = plugin;
+        this.filename = filename;
         saveDefaultConfig();
     }
 
     public void reloadConfig() {
         if (configFile == null) {
-            configFile = new File(plugin.getDataFolder(), "data.yml");
+            configFile = new File(plugin.getDataFolder(), filename);
         }
         dataConfig = YamlConfiguration.loadConfiguration(configFile);
     }
@@ -36,16 +38,16 @@ public class DataManager {
         try {
             getConfig().save(configFile);
         } catch (IOException e) {
-            plugin.getLogger().severe("Could not save data.yml!");
+            plugin.getLogger().severe("Could not save " + filename + "!");
         }
     }
 
     public void saveDefaultConfig() {
         if (configFile == null) {
-            configFile = new File(plugin.getDataFolder(), "data.yml");
+            configFile = new File(plugin.getDataFolder(), filename);
         }
         if (!configFile.exists()) {
-            plugin.saveResource("data.yml", false);
+            plugin.saveResource(filename, false);
         }
     }
 }

@@ -4,14 +4,21 @@ import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slivkaa.offlineTp.commands.offlineTpCommand;
 import org.slivkaa.offlineTp.commands.offlineTpCommandTabAutocompletion;
+import org.slivkaa.offlineTp.commands.reloadCommand;
 import org.slivkaa.offlineTp.listeners.onJoinListener;
 
 public final class OfflineTp extends JavaPlugin {
     private static DataManager data;
+    private static DataManager config;
 
     @Override
     public void onEnable() {
+        data = new DataManager(this, "tpqueue");
+        config = new DataManager(this, "config");
+        data.saveDefaultConfig();
+        config.saveDefaultConfig();
         getCommand("offlinetp").setExecutor(new offlineTpCommand());
+        getCommand("offlinetp-reload").setExecutor(new reloadCommand());
         getCommand("offlinetp").setTabCompleter(new offlineTpCommandTabAutocompletion());
         getServer().getPluginManager().registerEvents(new onJoinListener(), this);
     }
@@ -20,7 +27,7 @@ public final class OfflineTp extends JavaPlugin {
     public void onDisable() {
     }
 
-    // Next 2 methods are credited to Gemeni AI
+    // Next 2 methods are credited to Gemini AI
     public static String LocationToString(Location loc){
         return loc.getWorld().getName() + "/" + loc.getX() + "/" + loc.getY() + "/" + loc.getZ() + "/" + loc.getYaw() + "/" + loc.getPitch();
     }
@@ -48,7 +55,7 @@ public final class OfflineTp extends JavaPlugin {
         return loc;
     }
 
-    public static DataManager getDataManager() {
-        return data;
-    }
+    public static DataManager getDataFile() {return data;}
+    public static DataManager getConfigFile() {return config;}
+    public static String getColorText(String path){return ChatColor.translateAlternateColorCodes('&', config.getConfig().getString(path));}
 }

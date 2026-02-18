@@ -1,0 +1,26 @@
+
+
+messages:
+  ## OUTPUT
+  # Runned the command with 1 argument
+  # Can use variables %player% for target player name, and %me% for your player name
+  ran-with-1-player: "You have been teleported to position of %player%"
+
+  # Runned the command with 2 arguments
+  # Can use variables %player1% for first player name, and %player2% for first player name
+  ran-with-2-players: "%player1% have been teleported to position of %player2%"
+
+
+  ## ERRORS
+  # If command with 1 argument is executed by something but not player (Console or Command block)
+  error-cant-tp-non-player: "&cERROR: Cant teleport non player executor"
+
+  # If no arguments provided
+  error-no-args: "&cERROR: Excepted at least 1 argument"
+
+  # Has no permission
+  error-no-permission: "&cYou don't have permission to run this command"
+
+  # If player name that has not ever joined the server (sowy for my bad english man)
+  # Can use variable %player% for unknown player name
+  error-unknown-player: "&cERROR: Player hasn't joined yet"

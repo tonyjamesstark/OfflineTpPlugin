@@ -8,8 +8,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.slivkaa.offlineTp.DataManager;
 import org.slivkaa.offlineTp.OfflineTp;
 
+// no ai
+
 public class onJoinListener implements Listener {
-    private final DataManager data = OfflineTp.getDataManager();
+    private final DataManager data = OfflineTp.getDataFile();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
