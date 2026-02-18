@@ -2,6 +2,7 @@ package org.slivkaa.offlineTp;
 
 import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.Nullable;
 import org.slivkaa.offlineTp.commands.offlineTpCommand;
 import org.slivkaa.offlineTp.commands.offlineTpCommandTabAutocompletion;
 import org.slivkaa.offlineTp.commands.reloadCommand;
@@ -13,10 +14,8 @@ public final class OfflineTp extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        data = new DataManager(this, "tpqueue");
-        config = new DataManager(this, "config");
-        data.saveDefaultConfig();
-        config.saveDefaultConfig();
+        data = new DataManager(this, "tpqueue.yml");
+        config = new DataManager(this, "config.yml");
         getCommand("offlinetp").setExecutor(new offlineTpCommand());
         getCommand("offlinetp-reload").setExecutor(new reloadCommand());
         getCommand("offlinetp").setTabCompleter(new offlineTpCommandTabAutocompletion());
@@ -25,6 +24,7 @@ public final class OfflineTp extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        System.out.println("See ya later!");
     }
 
     // Next 2 methods are credited to Gemini AI
@@ -48,6 +48,15 @@ public final class OfflineTp extends JavaPlugin {
         data.getConfig().set(name, locStr);
         data.saveConfig();
     }
+
+    public static Location GetNewOfflinePlayerLocation(OfflinePlayer target){
+        String loc = data.getConfig().getString(target.getName());
+        if (loc == null){
+            return null;
+        }
+        return StringToLocation(loc);
+    }
+
     public static Location GetNewOfflinePlayerLocationAndRemove(OfflinePlayer target){
         Location loc = StringToLocation(data.getConfig().getString(target.getName()));
         data.getConfig().set(target.getName(), null);

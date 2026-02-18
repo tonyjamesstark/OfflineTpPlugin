@@ -10,6 +10,9 @@ messages:
   # Can use variables %player1% for first player name, and %player2% for first player name
   ran-with-2-players: "%player1% have been teleported to position of %player2%"
 
+  # Can use variables %player1% for first player name, and %player2% for first player name
+  reloading: "Reloading OfflineTp config..."
+
 
   ## ERRORS
   # If command with 1 argument is executed by something but not player (Console or Command block)

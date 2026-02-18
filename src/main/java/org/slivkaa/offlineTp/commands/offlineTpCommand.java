@@ -1,6 +1,7 @@
 package org.slivkaa.offlineTp.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,7 +41,7 @@ public class offlineTpCommand implements CommandExecutor {
 
         if (args.length == 1){
             if (!perm1){sender.sendMessage(OfflineTp.getColorText("messages.error-no-permission")); return true;}
-            player.teleport(target.getLocation());
+            teleportWithoutThatUnnecessaryBug(player, target);
             sender.sendMessage(OfflineTp.getColorText("messages.ran-with-1-player")
                     .replace("%player%", target.getName())
                     .replace("%me%", player.getDisplayName()));
@@ -52,7 +53,9 @@ public class offlineTpCommand implements CommandExecutor {
                 sender.sendMessage(OfflineTp.getColorText("messages.error-unknown-player")
                         .replace("%player%", target.getName()));
             } else{
-                if (target.isOnline()) {target.getPlayer().teleport(otherTarget.getLocation());}
+                if (target.isOnline()) {
+                    teleportWithoutThatUnnecessaryBug(target.getPlayer(), otherTarget);
+                }
                 else{OfflineTp.SetNewOfflinePlayerLocation(target, otherTarget.getLocation());}
                     sender.sendMessage(OfflineTp.getColorText("messages.ran-with-2-players")
                             .replace("%player1%", target.getName())
@@ -62,5 +65,11 @@ public class offlineTpCommand implements CommandExecutor {
         }
 
         return true;
+    }
+    private void teleportWithoutThatUnnecessaryBug(Player p, OfflinePlayer t){
+        Location loc = OfflineTp.GetNewOfflinePlayerLocation(t);
+        if (loc == null){
+            p.teleport(t.getLocation());
+        } else {p.teleport(loc);}
     }
 }

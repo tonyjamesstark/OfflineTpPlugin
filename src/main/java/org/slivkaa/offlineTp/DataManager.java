@@ -13,7 +13,7 @@ public class DataManager {
     private final JavaPlugin plugin;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
-    private String filename;
+    private final String filename;
 
     public DataManager(JavaPlugin plugin, String filename) {
         this.plugin = plugin;
