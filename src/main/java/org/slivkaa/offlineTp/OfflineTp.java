@@ -1,6 +1,7 @@
 package org.slivkaa.offlineTp;
 
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.Nullable;
 import org.slivkaa.offlineTp.commands.offlineTpCommand;
@@ -24,7 +25,7 @@ public final class OfflineTp extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        System.out.println("See ya later!");
+        getLogger().info("See ya later!");
     }
 
     // Next 2 methods are credited to Gemini AI
@@ -55,6 +56,25 @@ public final class OfflineTp extends JavaPlugin {
             return null;
         }
         return StringToLocation(loc);
+    }
+
+    public static Location GetCurrentOrQueuedLocation(OfflinePlayer target){
+        Location queued = GetNewOfflinePlayerLocation(target);
+        return queued != null ? queued : target.getLocation();
+    }
+
+    // Local lookup only: Bukkit.getOfflinePlayer(String) asks Mojang on the main thread for unknown names
+    public static OfflinePlayer FindKnownPlayer(String name){
+        Player online = Bukkit.getPlayerExact(name);
+        if (online != null){
+            return online;
+        }
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()){
+            if (name.equalsIgnoreCase(player.getName())){
+                return player;
+            }
+        }
+        return null;
     }
 
     public static Location GetNewOfflinePlayerLocationAndRemove(OfflinePlayer target){
