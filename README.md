@@ -1,5 +1,7 @@
 This plugin adds a new command, /offlinetp. This command allows to teleport offline players or teleport to one.
 
+Requires Minecraft 26.2 (Spigot, Paper or Purpur) and Java 25.
+
 Commands:
  - /offlinetp - Teleport offline player or to offline player
  - /offlinetp \<target\> - teleport to target
