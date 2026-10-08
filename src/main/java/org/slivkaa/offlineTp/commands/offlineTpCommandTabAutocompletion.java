@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +18,14 @@ public class offlineTpCommandTabAutocompletion implements TabCompleter {
         List<String> autoCompletionList = new ArrayList<>();
 
         if ((args.length == 1) || (args.length == 2)){
-            OfflinePlayer[] allPlayers = Bukkit.getOfflinePlayers();
-            for (OfflinePlayer offPlayer : allPlayers){
-                if (offPlayer.hasPlayedBefore()){
-                    autoCompletionList.add(offPlayer.getName());
+            List<String> names = new ArrayList<>();
+            for (OfflinePlayer offPlayer : Bukkit.getOfflinePlayers()){
+                if (offPlayer.getName() != null){
+                    names.add(offPlayer.getName());
                 }
             }
+            StringUtil.copyPartialMatches(args[args.length - 1], names, autoCompletionList);
         }
-
 
         return autoCompletionList;
     }

@@ -1,6 +1,7 @@
 package org.slivkaa.offlineTp;
 
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.Nullable;
 import org.slivkaa.offlineTp.commands.offlineTpCommand;
@@ -24,7 +25,7 @@ public final class OfflineTp extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        System.out.println("See ya later!");
+        getLogger().info("See ya later!");
     }
 
     // Next 2 methods are credited to Gemini AI
@@ -43,24 +44,64 @@ public final class OfflineTp extends JavaPlugin {
         );
     }
     public static void SetNewOfflinePlayerLocation(OfflinePlayer target, Location loc){
-        String name = target.getName();
-        String locStr = LocationToString(loc);
-        data.getConfig().set(name, locStr);
+        if (target.getName() != null){
+            data.getConfig().set(target.getName(), null);
+        }
+        data.getConfig().set(target.getUniqueId().toString(), LocationToString(loc));
         data.saveConfig();
     }
 
+    // Queues written before 2.0.0 are keyed by player name
+    private static String QueueKey(OfflinePlayer target){
+        String uuid = target.getUniqueId().toString();
+        String name = target.getName();
+        if (!data.getConfig().contains(uuid) && name != null && data.getConfig().contains(name)){
+            return name;
+        }
+        return uuid;
+    }
+
     public static Location GetNewOfflinePlayerLocation(OfflinePlayer target){
-        String loc = data.getConfig().getString(target.getName());
+        String loc = data.getConfig().getString(QueueKey(target));
         if (loc == null){
             return null;
         }
         return StringToLocation(loc);
     }
 
+    public static Location GetCurrentOrQueuedLocation(OfflinePlayer target){
+        Location queued = GetNewOfflinePlayerLocation(target);
+        return queued != null ? queued : target.getLocation();
+    }
+
+    // Local lookup only: Bukkit.getOfflinePlayer(String) asks Mojang on the main thread for unknown names
+    public static OfflinePlayer FindKnownPlayer(String name){
+        Player online = Bukkit.getPlayerExact(name);
+        if (online != null){
+            return online;
+        }
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()){
+            if (name.equalsIgnoreCase(player.getName())){
+                return player;
+            }
+        }
+        return null;
+    }
+
     public static Location GetNewOfflinePlayerLocationAndRemove(OfflinePlayer target){
-        Location loc = StringToLocation(data.getConfig().getString(target.getName()));
-        data.getConfig().set(target.getName(), null);
+        String key = QueueKey(target);
+        String locStr = data.getConfig().getString(key);
+        if (locStr == null){
+            return null;
+        }
+        data.getConfig().set(key, null);
         data.saveConfig();
+        Location loc = StringToLocation(locStr);
+        if (!loc.isWorldLoaded()){
+            getPlugin(OfflineTp.class).getLogger().warning("Dropped queued teleport of " + target.getName()
+                    + " to " + locStr + ": world is not loaded");
+            return null;
+        }
         return loc;
     }
 

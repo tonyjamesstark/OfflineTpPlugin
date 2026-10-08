@@ -27,3 +27,7 @@ messages:
   # If player name that has not ever joined the server (sowy for my bad english man)
   # Can use variable %player% for unknown player name
   error-unknown-player: "&cERROR: Player hasn't joined yet"
+
+  # If the destination (where the player is, or is queued to go) is in a world that isn't loaded
+  # Can use variable %player% for that player name
+  error-unknown-world: "&cERROR: %player% is in a world that isn't loaded"
