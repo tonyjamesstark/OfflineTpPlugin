@@ -1,7 +1,7 @@
 name: OfflineTp
 version: '1.0'
 main: org.slivkaa.offlineTp.OfflineTp
-api-version: '1.21'
+api-version: '26.2'
 prefix: OfflineTP
 authors: [ Slivkaa ]
 description: This simple plugin allows to do teleport stuff to offline players.
