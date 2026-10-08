@@ -43,14 +43,25 @@ public final class OfflineTp extends JavaPlugin {
         );
     }
     public static void SetNewOfflinePlayerLocation(OfflinePlayer target, Location loc){
-        String name = target.getName();
-        String locStr = LocationToString(loc);
-        data.getConfig().set(name, locStr);
+        if (target.getName() != null){
+            data.getConfig().set(target.getName(), null);
+        }
+        data.getConfig().set(target.getUniqueId().toString(), LocationToString(loc));
         data.saveConfig();
     }
 
+    // Queues written before 2.0.0 are keyed by player name
+    private static String QueueKey(OfflinePlayer target){
+        String uuid = target.getUniqueId().toString();
+        String name = target.getName();
+        if (!data.getConfig().contains(uuid) && name != null && data.getConfig().contains(name)){
+            return name;
+        }
+        return uuid;
+    }
+
     public static Location GetNewOfflinePlayerLocation(OfflinePlayer target){
-        String loc = data.getConfig().getString(target.getName());
+        String loc = data.getConfig().getString(QueueKey(target));
         if (loc == null){
             return null;
         }
@@ -58,9 +69,19 @@ public final class OfflineTp extends JavaPlugin {
     }
 
     public static Location GetNewOfflinePlayerLocationAndRemove(OfflinePlayer target){
-        Location loc = StringToLocation(data.getConfig().getString(target.getName()));
-        data.getConfig().set(target.getName(), null);
+        String key = QueueKey(target);
+        String locStr = data.getConfig().getString(key);
+        if (locStr == null){
+            return null;
+        }
+        data.getConfig().set(key, null);
         data.saveConfig();
+        Location loc = StringToLocation(locStr);
+        if (!loc.isWorldLoaded()){
+            getPlugin(OfflineTp.class).getLogger().warning("Dropped queued teleport of " + target.getName()
+                    + " to " + locStr + ": world is not loaded");
+            return null;
+        }
         return loc;
     }
 

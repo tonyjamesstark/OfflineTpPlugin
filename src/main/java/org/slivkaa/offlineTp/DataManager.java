@@ -8,6 +8,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class DataManager {
     private final JavaPlugin plugin;
@@ -26,6 +29,11 @@ public class DataManager {
             configFile = new File(plugin.getDataFolder(), filename);
         }
         dataConfig = YamlConfiguration.loadConfiguration(configFile);
+        InputStream defaults = plugin.getResource(filename);
+        if (defaults != null) {
+            dataConfig.setDefaults(YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(defaults, StandardCharsets.UTF_8)));
+        }
     }
 
     public FileConfiguration getConfig() {

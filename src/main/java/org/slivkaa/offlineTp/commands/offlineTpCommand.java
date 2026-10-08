@@ -41,7 +41,10 @@ public class offlineTpCommand implements CommandExecutor {
 
         if (args.length == 1){
             if (!perm1){sender.sendMessage(OfflineTp.getColorText("messages.error-no-permission")); return true;}
-            teleportWithoutThatUnnecessaryBug(player, target);
+            if (!teleportWithoutThatUnnecessaryBug(player, target)){
+                sendUnknownWorld(sender, target);
+                return true;
+            }
             sender.sendMessage(OfflineTp.getColorText("messages.ran-with-1-player")
                     .replace("%player%", target.getName())
                     .replace("%me%", player.getDisplayName()));
@@ -54,9 +57,19 @@ public class offlineTpCommand implements CommandExecutor {
                         .replace("%player%", target.getName()));
             } else{
                 if (target.isOnline()) {
-                    teleportWithoutThatUnnecessaryBug(target.getPlayer(), otherTarget);
+                    if (!teleportWithoutThatUnnecessaryBug(target.getPlayer(), otherTarget)){
+                        sendUnknownWorld(sender, otherTarget);
+                        return true;
+                    }
                 }
-                else{OfflineTp.SetNewOfflinePlayerLocation(target, otherTarget.getLocation());}
+                else{
+                    Location loc = otherTarget.getLocation();
+                    if (!isLoaded(loc)){
+                        sendUnknownWorld(sender, otherTarget);
+                        return true;
+                    }
+                    OfflineTp.SetNewOfflinePlayerLocation(target, loc);
+                }
                     sender.sendMessage(OfflineTp.getColorText("messages.ran-with-2-players")
                             .replace("%player1%", target.getName())
                             .replace("%player2%", otherTarget.getName()));
@@ -66,10 +79,23 @@ public class offlineTpCommand implements CommandExecutor {
 
         return true;
     }
-    private void teleportWithoutThatUnnecessaryBug(Player p, OfflinePlayer t){
+    private boolean teleportWithoutThatUnnecessaryBug(Player p, OfflinePlayer t){
         Location loc = OfflineTp.GetNewOfflinePlayerLocation(t);
         if (loc == null){
-            p.teleport(t.getLocation());
-        } else {p.teleport(loc);}
+            loc = t.getLocation();
+        }
+        if (!isLoaded(loc)){
+            return false;
+        }
+        p.teleport(loc);
+        return true;
+    }
+
+    private boolean isLoaded(Location loc){
+        return loc != null && loc.isWorldLoaded();
+    }
+
+    private void sendUnknownWorld(CommandSender sender, OfflinePlayer player){
+        sender.sendMessage(OfflineTp.getColorText("messages.error-unknown-world").replace("%player%", player.getName()));
     }
 }
