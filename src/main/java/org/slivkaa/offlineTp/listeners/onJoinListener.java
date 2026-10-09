@@ -16,6 +16,7 @@ public class onJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         Player player = e.getPlayer();
+        OfflineTp.RememberName(player);
         if (data.getConfig().getKeys(false).contains(player.getName())){
             Location loc = OfflineTp.GetNewOfflinePlayerLocationAndRemove(player);
             player.teleport(loc);

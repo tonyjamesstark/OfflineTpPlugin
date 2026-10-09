@@ -9,9 +9,15 @@ import org.slivkaa.offlineTp.commands.offlineTpCommandTabAutocompletion;
 import org.slivkaa.offlineTp.commands.reloadCommand;
 import org.slivkaa.offlineTp.listeners.onJoinListener;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public final class OfflineTp extends JavaPlugin {
     private static DataManager data;
     private static DataManager config;
+    private static final Map<UUID, String> knownNames = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
@@ -21,6 +27,18 @@ public final class OfflineTp extends JavaPlugin {
         getCommand("offlinetp-reload").setExecutor(new reloadCommand());
         getCommand("offlinetp").setTabCompleter(new offlineTpCommandTabAutocompletion());
         getServer().getPluginManager().registerEvents(new onJoinListener(), this);
+        for (Player player : Bukkit.getOnlinePlayers()){
+            RememberName(player);
+        }
+        // OfflinePlayer.getName() reads the player's data file, which takes minutes for a large playerdata folder
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            for (OfflinePlayer player : Bukkit.getOfflinePlayers()){
+                String name = player.getName();
+                if (name != null){
+                    knownNames.putIfAbsent(player.getUniqueId(), name);
+                }
+            }
+        });
     }
 
     @Override
@@ -63,15 +81,23 @@ public final class OfflineTp extends JavaPlugin {
         return queued != null ? queued : target.getLocation();
     }
 
+    public static void RememberName(Player player){
+        knownNames.put(player.getUniqueId(), player.getName());
+    }
+
+    public static Collection<String> KnownNames(){
+        return knownNames.values();
+    }
+
     // Local lookup only: Bukkit.getOfflinePlayer(String) asks Mojang on the main thread for unknown names
     public static OfflinePlayer FindKnownPlayer(String name){
         Player online = Bukkit.getPlayerExact(name);
         if (online != null){
             return online;
         }
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()){
-            if (name.equalsIgnoreCase(player.getName())){
-                return player;
+        for (Map.Entry<UUID, String> known : knownNames.entrySet()){
+            if (name.equalsIgnoreCase(known.getValue())){
+                return Bukkit.getOfflinePlayer(known.getKey());
             }
         }
         return null;
